@@ -9,10 +9,9 @@ const Giphy = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-
-
+  const [post , setPost] = useState([])
   const [message , setMessage] = useState("");
-  const [fullMessage , setFullmessage] = useState();
+  // const [fullMessage , setFullmessage] = useState([]);
 
   const inputEvent = (event) => {
       setMessage(event.target.value)
@@ -23,9 +22,11 @@ const Giphy = () => {
     }
     
     const onSubmitt = () => {
-        setFullmessage(message)
+        setPost(oldmsg => [...oldmsg , message])
         deleteEvent()
     }
+
+ 
 
   const renderGifs = () => {
     if (isLoading) {
@@ -34,7 +35,11 @@ const Giphy = () => {
     return data.map(el => {
       return (
         <div key={el.id} className="gif">
-          <img alt={''} src={el.images.fixed_height.url} />
+         <img alt={''} style={{width:"20vw" , marginBottom:"10px"}} src={el.images.fixed_height.url} onClick={() => {
+
+      {alert("Do You want to Post this message?")} postImage(el.id)}
+       
+         }  /> 
         </div>
       );
     });
@@ -51,6 +56,22 @@ const Giphy = () => {
       );
     }
   };
+
+  
+
+  const postImage = async (id) => {
+    const results = await axios(`https://api.giphy.com/v1/gifs/${id}`, {
+        params: {
+          api_key: "tAEFUgagRjRNkU24orQdFB8EHMcNTUSe",
+          q: search,
+          limit: 9
+        }
+      });
+
+      console.log(results)
+      setPost(old => [...old , results.data.data.images.fixed_height.url])
+
+  }
 
   const searchHandler = event => {
     setSearch(event.target.value);
@@ -75,7 +96,7 @@ setSearch("")
           limit: 9
         }
       });
-
+console.log(results)
         setData(results.data.data);
         deleteSearch();
     } catch (err) {
@@ -91,20 +112,60 @@ setSearch("")
 
   return (
       
-    <div className="m-2">
+    <div className="m-3">
 
-<div className="card ">
-  <div className="card-body" >
-   <h3> {fullMessage} </h3>
-  </div>
+<div >
+  
+   <>
+
+   <div className="container-fluid">
+     <ul>
+
+       {/* {
+         fullMessage.map((msg) => {
+           return <li className="msg" style={{listStyle: "none" }}> {msg} </li>
+         })
+       } */}
+      <div className="my-2">
+       {
+         post.map((link) => {
+
+          if(link.substring(0,5) === "https") {
+            return  <> 
+            
+            <li style={{listStyle: "none" }}><img style={{width:"20vw" , marginBottom:"10px"}} src={link} alt="" /> </li>
+            
+             </>
+
+          }
+          return <li className="msg" style={{listStyle: "none" }}> {link} </li>
+
+         })
+       }
+       </div>
+     </ul>
+   </div>
+
+   </>
+
+
+   {/* { <img alt={''} src={post} /> } */}
+
+   
 </div>
-<div className="input-group my-2">
-  <input type="text" className="form-control" value={message} onChange={inputEvent} placeholder="Enter a Message" aria-label="Recipient's username" aria-describedby="button-addon2" />
-  <button className="btn btn-outline-primary" onClick={onSubmitt}>Send</button>
+{renderError()}
+
+<div>
+
+<div className="row">
+
+<div className="col-9 input-group my-2 text_left">
+  <input type="text" className="form-control text_input" value={message} onChange={inputEvent} placeholder="Enter a Message" aria-label="Recipient's username" aria-describedby="button-addon2" />
+  <button className="btn btn-outline-primary mx-2" onClick={onSubmitt}>Send</button>
 </div>
 
-      {renderError()}
-      <form className="form-inline justify-content-center m-2">
+     <div className="col-3">
+      <form className="form-inline justify-content m-2">
         <input
           value={search}
           onChange={searchHandler}
@@ -118,8 +179,18 @@ setSearch("")
           Go
         </button>
       </form>
+      </div>
+
+      </div>
+      </div>
+      <div >
+        
+        
+      <div className="container gifs"> {renderGifs()}
+     
+       </div>
       
-      <div className="container gifs"> {renderGifs()} </div>
+      </div>
     </div>
   );
 };

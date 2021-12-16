@@ -1,5 +1,9 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500;600&display=swap');
+
 body {
-    background-color: rgb(219, 157, 219);
+  background-color: rgb(240, 240, 240);
+    font-family: 'Open Sans', sans-serif;
   }
   
   .gifs {
@@ -17,3 +21,14 @@ body {
   .loader {
     color: rgb(19, 19, 26);
   }
+
+  .msg {
+    height: 30px;
+  width: calc(100% - 132px);
+  background-color: white;
+  border: 1px solid white;
+  padding: 0px 18px;
+  outline: none;
+  font-size: 15px;
+  }
+
